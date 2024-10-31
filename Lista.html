@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listado de Archivos y Carpetas</title>
+    <title>Listado de Archivos y Carpetas del Repositorio</title>
     <style>
         body { font-family: Arial, sans-serif; }
         ul { list-style-type: none; padding: 0; }
@@ -11,33 +11,37 @@
     </style>
 </head>
 <body>
-    <h1>Contenido de la Carpeta</h1>
-    <ul>
-        <?php
-        // Cambia "nombre_de_carpeta" a la ruta relativa de la carpeta que quieres listar
-        $directory = __DIR__ . '/Bibloteca/';
+    <h1>Contenido del Repositorio</h1>
+    <ul id="fileList"></ul>
 
-        // Verifica que la carpeta existe
-        if (is_dir($directory)) {
-            // Abre el directorio
-            if ($dir = opendir($directory)) {
-                // Lee el contenido de la carpeta
-                while (($file = readdir($dir)) !== false) {
-                    if ($file !== '.' && $file !== '..') { // Ignora las carpetas especiales . y ..
-                        $path = $directory . '/' . $file;
-                        // Verifica si es archivo o carpeta
-                        $type = is_dir($path) ? '[Carpeta]' : '[Archivo]';
-                        echo "<li>$type $file</li>";
-                    }
-                }
-                closedir($dir);
-            } else {
-                echo "<li>No se pudo abrir el directorio.</li>";
+    <script>
+        async function fetchRepoContent() {
+            // Reemplaza "usuario" y "repositorio" con el usuario y nombre de tu repositorio
+            const user = "antony05";
+            const repo = "esrn2";
+            const path = "Bibloteca"; // Ruta dentro del repositorio, déjalo vacío para la raíz
+
+            const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+                
+                const files = await response.json();
+                const fileList = document.getElementById("fileList");
+
+                files.forEach(file => {
+                    const li = document.createElement("li");
+                    li.innerHTML = file.type === "dir" ? `[Carpeta] ${file.name}` : `[Archivo] ${file.name}`;
+                    fileList.appendChild(li);
+                });
+            } catch (error) {
+                console.error("Error al obtener la lista de archivos:", error);
             }
-        } else {
-            echo "<li>El directorio no existe.</li>";
         }
-        ?>
-    </ul>
+
+        // Llama a la función al cargar la página
+        window.onload = fetchRepoContent;
+    </script>
 </body>
 </html>
