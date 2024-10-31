@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listado de Archivos y Carpetas del Repositorio</title>
+    <title>Listado y Descarga de Archivos de Bibloteca</title>
     <style>
         body { font-family: Arial, sans-serif; }
         ul { list-style-type: none; padding: 0; }
         li { padding: 5px 0; }
+        a { color: blue; text-decoration: none; }
     </style>
 </head>
 <body>
-    <h1>Contenido del Repositorio</h1>
+    <h1>Contenido de la Carpeta "Bibloteca"</h1>
     <ul id="fileList"></ul>
 
     <script>
         async function fetchRepoContent() {
-            // Reemplaza "usuario" y "repositorio" con el usuario y nombre de tu repositorio
             const user = "antony05";
             const repo = "esrn2";
-            const path = "Bibloteca"; // Ruta dentro del repositorio, déjalo vacío para la raíz
+            const path = "Bibloteca"; // Carpeta específica dentro del repositorio
 
             const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
 
@@ -32,7 +32,19 @@
 
                 files.forEach(file => {
                     const li = document.createElement("li");
-                    li.innerHTML = file.type === "dir" ? `[Carpeta] ${file.name}` : `[Archivo] ${file.name}`;
+
+                    if (file.type === "dir") {
+                        // Muestra solo el nombre si es una carpeta
+                        li.textContent = `[Carpeta] ${file.name}`;
+                    } else {
+                        // Crea un enlace de descarga si es archivo
+                        const link = document.createElement("a");
+                        link.href = file.download_url; // URL de descarga directa
+                        link.textContent = `[Archivo] ${file.name}`;
+                        link.target = "_blank"; // Abre en una nueva pestaña
+                        li.appendChild(link);
+                    }
+
                     fileList.appendChild(li);
                 });
             } catch (error) {
