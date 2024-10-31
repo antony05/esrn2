@@ -31,5 +31,5 @@ app.get("/list-directory", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en https://escuelarural2ev.com/:${PORT}`);
+  console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
 });
