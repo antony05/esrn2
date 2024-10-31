@@ -125,13 +125,13 @@
     <div class="container inscription-container">
         <div class="inscription-list">
             <h3>Biblioteca General</h3>
-            <ul id="bibliotecaList">
+            <ul id="general">
                 <!-- Los documentos se cargarán aquí -->
             </ul>
         </div>
         <div class="inscription-list">
             <h3>Biblioteca Tecnología/Informática</h3>
-            <ul id="documentosList">
+            <ul id="tecnologia">
                 <!-- Los documentos se cargarán aquí -->
             </ul>
         </div>
@@ -206,8 +206,8 @@
 
         // Carga el contenido de las carpetas al cargar la página
         window.onload = function() {
-            fetchRepoContent("bibliotecaList", "Bibloteca/General/");
-            fetchRepoContent("documentosList", "Bibloteca/Informatica/");
+            fetchRepoContent("general", "Bibloteca/General/");
+            fetchRepoContent("tecnologia", "Bibloteca/Informatica/");
         };
     </script>
 </body>
