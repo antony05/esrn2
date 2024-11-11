@@ -193,7 +193,8 @@
                     } else {
                         const link = document.createElement("a");
                         link.href = file.download_url;
-                        link.textContent = `[Libro] ${file.name}`;
+                        const fileSize = file.size ? ` - Tamaño: ${(file.size / (1024 * 1024)).toFixed(2)} MB` : "";
+                        link.textContent = `[${fileSize}] ${file.name}`;
                         link.target = "_blank";
                         li.appendChild(link);
                     }
