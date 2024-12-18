@@ -20,7 +20,8 @@
                 menuItem.innerHTML = `<a href="${item.url}" class="nav-item nav-link">${item.nombre}</a>`;
             } else {
                 // Categoría con submenús
-                menuItem.innerHTML = `<span>${item.nombre} ▼</span>`;
+                menuItem.innerHTML = `<div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">${item.nombre} ▼</a><div class="dropdown-menu fade-down m-0">`;
 
                 // Crear submenú
                 const subMenu = document.createElement("div");
@@ -31,6 +32,8 @@
                     subMenuItem.innerHTML = `<a href="${subitem.url}">${subitem.nombre}</a>`;
                     subMenu.appendChild(subMenuItem);
                 });
+                menuItem.innerHTML = `                    </div>
+                </div>`;
 
                 // Mostrar/ocultar submenú al hacer clic
                 menuItem.addEventListener("click", () => {
