@@ -7,7 +7,7 @@ const menuEstructura = [
         nombre: "Proyectos 2024",
         submenus: [
             { nombre: "Cuerpo y Alma Viajera", url: "proyecto-alma.html" },
-            { nombre: "Cuerpo y Alma Viajera", url: "proyecto-huellas.html" },
+            { nombre: "Huellas Andinas", url: "proyecto-huellas.html" },
             { nombre: "Sinfonía de Tierra y Saber: Cultivos Ancestrales", url: "proyecto-cultivo.html" },
             { nombre: "Juegos tradicionales con pensamiento matemáticos", url: "proyecto-juegos.html" },
             { nombre: "La vuelta al mundo en 80 obras", url: "proyecto-mundo.html" },
