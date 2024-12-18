@@ -3,16 +3,21 @@ const menuEstructura = [
     { nombre: "Inicio", url: "index.html" },
     { nombre: "Sedes", url: "sedes.html" },
     { nombre: "Diseño Curricular", url: "diseño.html" },
-    { nombre: "Inscripción", url: "inscripcion.html" },
-    { nombre: "Biblioteca", url: "Libros.html" },
-    { nombre: "Contacto", url: "contacto.html" },
     { 
         nombre: "Proyectos 2024",
         submenus: [
-            { nombre: "Subtema 3.1", url: "tema3/subtema3.1.html" },
-            { nombre: "Subtema 3.2", url: "tema3/subtema3.2.html" }
+            { nombre: "Cuerpo y Alma Viajera", url: "proyecto-alma.html" },
+            { nombre: "Cuerpo y Alma Viajera", url: "proyecto-huellas.html" },
+            { nombre: "Sinfonía de Tierra y Saber: Cultivos Ancestrales", url: "proyecto-cultivo.html" },
+            { nombre: "Juegos tradicionales con pensamiento matemáticos", url: "proyecto-juegos.html" },
+            { nombre: "La vuelta al mundo en 80 obras", url: "proyecto-mundo.html" },
+            { nombre: "El diablo en las alturas", url: "proyecto-diablo.html" },
+
         ]
-    }
+    },
+    { nombre: "Inscripción", url: "inscripcion.html" },
+    { nombre: "Biblioteca", url: "Libros.html" },
+    { nombre: "Contacto", url: "contacto.html" },
 ];
 
 // Generar menú dinámico
