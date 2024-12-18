@@ -6,6 +6,13 @@
             { nombre: "Inscripcion", url: "inscripcion.html" },
             { nombre: "Biblioteca", url: "Libros.html" },
             { nombre: "Contacto", url: "contacto.html" },
+            { 
+                nombre: "Proyectos 2024", url: "proyectos24.html",
+                submenus: [
+                    { nombre: "Subtema 3.1", url: "tema3/subtema3.1.html" },
+                    { nombre: "Subtema 3.2", url: "tema3/subtema3.2.html" }
+                ]
+            }
         ];
 
         // Generar menú dinámico
