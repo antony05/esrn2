@@ -1,1 +1,201 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Académico</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+        .nota-aprobado { color: #198754; font-weight: bold; }
+        .nota-desaprobado { color: #dc3545; font-weight: bold; }
+        .card-materia { cursor: pointer; transition: transform 0.2s; }
+        .card-materia:hover { transform: scale(1.02); border-color: #0d6efd; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container">
+        <span class="navbar-brand mb-0 h1">Gestión Escolar</span>
+    </div>
+</nav>
+
+<div class="container" id="app">
+
+    <div id="view-login" class="view-section active">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm mt-5">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title mb-4">Consulta de Notas</h4>
+                        <div class="mb-3">
+                            <input type="number" id="input-dni" class="form-control form-control-lg" placeholder="Ingrese su DNI">
+                        </div>
+                        <button id="btn-ingresar" class="btn btn-primary btn-lg w-100">Ingresar</button>
+                        <div id="login-error" class="text-danger mt-3" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-materias" class="view-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 id="alumno-info">Materias</h3>
+            <button class="btn btn-outline-secondary btn-sm" onclick="showView('view-login')">Salir</button>
+        </div>
+        <div id="lista-materias" class="row g-3">
+            </div>
+        <div id="materias-loading" class="text-center mt-4" style="display:none;">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+        <div id="materias-error" class="alert alert-danger mt-3" style="display:none;"></div>
+    </div>
+
+    <div id="view-devoluciones" class="view-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 id="materia-titulo" class="h4">Devoluciones</h3>
+            <button class="btn btn-outline-secondary btn-sm" onclick="showView('view-materias')">Volver</button>
+        </div>
+        <div id="lista-devoluciones">
+            </div>
+        <div id="devoluciones-loading" class="text-center mt-4" style="display:none;">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+        <div id="devoluciones-error" class="alert alert-danger mt-3" style="display:none;"></div>
+    </div>
+
+</div>
+
+<script>
+    // IMPORTANTE: Cambia HTTP por HTTPS e ingresa tu dominio real
+    const API_BASE_URL = "https://TU_DOMINIO.epizy.com"; 
+
+    // Referencias al DOM
+    const viewLogin = document.getElementById('view-login');
+    const viewMaterias = document.getElementById('view-materias');
+    const viewDevoluciones = document.getElementById('view-devoluciones');
+    const inputDni = document.getElementById('input-dni');
+
+    // Estado de la aplicación
+    let currentDni = '';
+
+    // Manejador de Vistas
+    function showView(viewId) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+        if(viewId === 'view-login') inputDni.value = '';
+    }
+
+    // Evento Login
+    document.getElementById('btn-ingresar').addEventListener('click', () => {
+        const dni = inputDni.value.trim();
+        const errorDiv = document.getElementById('login-error');
+        
+        if (!dni || isNaN(dni)) {
+            errorDiv.textContent = "Ingrese un DNI válido.";
+            errorDiv.style.display = 'block';
+            return;
+        }
+        errorDiv.style.display = 'none';
+        currentDni = dni;
+        cargarMaterias(dni);
+    });
+
+    // Cargar Materias
+    async function cargarMaterias(dni) {
+        showView('view-materias');
+        document.getElementById('alumno-info').textContent = `Materias - DNI: ${dni}`;
+        document.getElementById('lista-materias').innerHTML = '';
+        document.getElementById('materias-error').style.display = 'none';
+        document.getElementById('materias-loading').style.display = 'block';
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api_inscripciones.php?dni_alumno=${dni}`);
+            
+            if (!response.ok) throw new Error(response.status === 404 ? 'No se encontraron materias (Verifica si hay inscripciones activas).' : 'Error de servidor.');
+            
+            const materias = await response.json();
+            document.getElementById('materias-loading').style.display = 'none';
+            renderMaterias(materias);
+        } catch (error) {
+            document.getElementById('materias-loading').style.display = 'none';
+            const errorDiv = document.getElementById('materias-error');
+            errorDiv.textContent = error.message;
+            errorDiv.style.display = 'block';
+        }
+    }
+
+    function renderMaterias(materias) {
+        const container = document.getElementById('lista-materias');
+        materias.forEach(mat => {
+            const col = document.createElement('div');
+            col.className = 'col-12 col-md-6';
+            col.innerHTML = `
+                <div class="card shadow-sm card-materia h-100" onclick="cargarDevoluciones(${mat.id_inscripcion}, '${mat.nombre_materia}')">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">${mat.nombre_materia}</h5>
+                        <p class="card-text mb-0 text-muted">Curso: <strong>${mat.curso}</strong></p>
+                        <p class="card-text text-muted"><small>Condición: ${mat.condicion}</small></p>
+                    </div>
+                </div>
+            `;
+            container.appendChild(col);
+        });
+    }
+
+    // Cargar Devoluciones
+    async function cargarDevoluciones(idInscripcion, nombreMateria) {
+        showView('view-devoluciones');
+        document.getElementById('materia-titulo').textContent = nombreMateria;
+        document.getElementById('lista-devoluciones').innerHTML = '';
+        document.getElementById('devoluciones-error').style.display = 'none';
+        document.getElementById('devoluciones-loading').style.display = 'block';
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api_evaluaciones.php?id_inscripcion=${idInscripcion}`);
+            
+            if (!response.ok) throw new Error(response.status === 404 ? 'Aún no hay calificaciones cargadas para esta materia.' : 'Error de servidor.');
+            
+            const evaluaciones = await response.json();
+            document.getElementById('devoluciones-loading').style.display = 'none';
+            renderDevoluciones(evaluaciones);
+        } catch (error) {
+            document.getElementById('devoluciones-loading').style.display = 'none';
+            const errorDiv = document.getElementById('devoluciones-error');
+            errorDiv.textContent = error.message;
+            errorDiv.style.display = 'block';
+        }
+    }
+
+    function renderDevoluciones(evaluaciones) {
+        const container = document.getElementById('lista-devoluciones');
+        evaluaciones.forEach(ev => {
+            const notaNum = parseFloat(ev.nota);
+            const notaClass = notaNum >= 6.0 ? 'nota-aprobado' : 'nota-desaprobado';
+            
+            const card = document.createElement('div');
+            card.className = 'card shadow-sm mb-3';
+            card.innerHTML = `
+                <div class="card-body">
+                    <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                        <span class="fw-bold">Trimestre ${ev.nro_trimestre} - Entrega ${ev.nro_entrega}</span>
+                        <span class="${notaClass}">Nota: ${ev.nota}</span>
+                    </div>
+                    <p class="mb-1 fw-bold text-secondary text-uppercase" style="font-size: 0.85rem;">Devolución del Docente:</p>
+                    <p class="mb-2">${ev.devolucion_docente || 'Sin observaciones.'}</p>
+                    <div class="text-end text-muted" style="font-size: 0.8rem;">
+                        Cargado: ${ev.fecha_carga}
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+</script>
+</body>
+</html>
